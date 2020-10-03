@@ -12,6 +12,9 @@ import java.util.NoSuchElementException;
 public class CsvIterator implements Iterator<List<String>> {
 
     private static final List<String> NO_NEXT_ROW = new ArrayList<>(0);
+    private static final int QUOTE_CHAR = '"';
+    private int currentChar;
+
 
     private enum ReadState {
         INITIAL,
@@ -55,9 +58,6 @@ public class CsvIterator implements Iterator<List<String>> {
             this.nextRow = readNextRow(reader);
         }
     }
-
-    private static final int QUOTE_CHAR = '"';
-    private int currentChar;
 
     private List<String> readNextRow(Reader reader) throws IOException {
         if (readState == ReadState.IN_ROW_SEPARATOR) {

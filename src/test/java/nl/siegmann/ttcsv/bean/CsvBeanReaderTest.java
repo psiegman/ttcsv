@@ -4,18 +4,20 @@ package nl.siegmann.ttcsv.bean;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.siegmann.ttcsv.bean.CsvBeanConfig;
-import nl.siegmann.ttcsv.bean.CsvBeanReader;
-import nl.siegmann.ttcsv.util.StringArrayReader;
+import nl.siegmann.ttcsv.csv.CsvConfig;
+import nl.siegmann.ttcsv.csv.CsvReader;
+import nl.siegmann.ttcsv.util.StringIteratorReader;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringReader;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,14 +34,20 @@ public class CsvBeanReaderTest {
         private Instant lastUpdate;
     }
 
+    private BeanFactoryBuilder beanFactoryBuilder;
+
+    @BeforeEach
+    public void setUp() {
+        this.beanFactoryBuilder = new BeanFactoryBuilder();
+    }
+
     @Test
     public void test_single_person() throws IOException {
         // given
-        Reader input = new StringArrayReader(new String[]{
+        Reader input = StringIteratorReader.of("\n",
                 "id|name|lastUpdate",
                 "1|alice|2020-10-26T10:15:30.00Z"
-        }, "\n");
-//        Reader input = new StringReader("id|name|lastUpdate\n1|alice|2020-10-26T10:15:30.00Z");
+        );
         CsvBeanReader csvBeanReader = new CsvBeanReader(new CsvBeanConfig(Person::new).withFieldSeparator('|'));
 
         // when
@@ -51,19 +59,30 @@ public class CsvBeanReaderTest {
     }
 
     @Test
-    public void test_two_persons() throws IOException {
+    public void test_two_persons_stream() throws Exception {
         // given
-        CsvBeanReader csvBeanReader = new CsvBeanReader(new CsvBeanConfig(Person::new).withFieldSeparator('|'));
-        Reader input = new StringReader("id|name|lastUpdate\n1|alice|2020-10-26T10:15:30.00Z\n2|bob|2020-10-26T11:15:30.00Z");
+        Stream<List<String>> csvStream = createCsvStream(
+                "id|name|lastUpdate",
+                "1|alice|2020-10-26T10:15:30.00Z",
+                "2|bob|2020-10-26T11:15:30.00Z"
+        );
+        Function<List<String>, Person> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
 
         // when
-        Stream<Person> csvData = csvBeanReader.apply(input);
+        List<Person> persons = csvStream
+                .map(beanFactory)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         // then
-        List<Person> personList = csvData.collect(Collectors.toList());
-        assertThat(personList).isEqualTo(Arrays.asList(
+        assertThat(persons).isEqualTo(Arrays.asList(
                 new Person(1, "alice", Instant.parse("2020-10-26T10:15:30.00Z")),
                 new Person(2, "bob", Instant.parse("2020-10-26T11:15:30.00Z"))
         ));
+    }
+
+    Stream<List<String>> createCsvStream(String... csvData) {
+        return new CsvReader(new CsvConfig().withFieldSeparator('|'))
+                .apply(StringIteratorReader.of("\n", csvData));
     }
 }

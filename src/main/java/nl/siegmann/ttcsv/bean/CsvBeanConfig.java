@@ -1,8 +1,8 @@
 package nl.siegmann.ttcsv.bean;
 
 import lombok.Getter;
-import nl.siegmann.ttcsv.csv.CsvConfig;
 import nl.siegmann.ttcsv.bean.converter.ConverterRegistry;
+import nl.siegmann.ttcsv.csv.CsvConfig;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -14,6 +14,7 @@ public class CsvBeanConfig<T> extends CsvConfig {
     private final Supplier<T> targetClassSupplier;
     private final T skipRowBean = null;
     private ConverterRegistry converterRegistry;
+    private final BeanFactoryBuilder beanFactoryBuilder = new BeanFactoryBuilder();
     private final Function<CsvBeanIterator.Row<T>, CsvBeanIterator.ProcessingState> rowPreProcessor = null;
 
     public CsvBeanConfig(Supplier<T> targetClassSupplier) {

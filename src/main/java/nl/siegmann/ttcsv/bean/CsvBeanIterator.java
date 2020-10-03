@@ -2,11 +2,10 @@ package nl.siegmann.ttcsv.bean;
 
 import lombok.Data;
 import lombok.SneakyThrows;
-import nl.siegmann.ttcsv.bean.beanmapper.BeanMapper;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 public class CsvBeanIterator<T> implements Iterator<T> {
 
@@ -48,20 +47,20 @@ public class CsvBeanIterator<T> implements Iterator<T> {
         }
     }
 
-    private final CsvBeanConfig<T> csvBeanConfig;
-    private Iterator<List<String>> csvIterator;
-    private final BeanMapper<T> beanMapper;
-    private final Row<T> row = new Row<>();
+    private final Iterator<List<String>> csvIterator;
+    private final Function<List<String>,T> beanFactory;
 
-    public CsvBeanIterator(CsvBeanConfig<T> csvBeanConfig, Iterator<List<String>> csvIterator) {
-        this.csvBeanConfig = csvBeanConfig;
+    public CsvBeanIterator(CsvBeanConfig<T> csvBeanConfig, Iterator<List<String>> csvIterator) throws Exception {
         this.csvIterator = csvIterator;
-        this.beanMapper = createBeanMapper(csvBeanConfig, csvIterator);
+        this.beanFactory = createBeanFactory(csvBeanConfig, csvIterator);
     }
 
-    private BeanMapper<T> createBeanMapper(CsvBeanConfig<T> csvBeanConfig, Iterator<List<String>> csvIterator) {
-        List<String> columnNames = csvIterator.next();
-        return new BeanMapper<T>(columnNames, csvBeanConfig.getTargetClass(), csvBeanConfig.getConverterRegistry());
+    private Function<List<String>,T> createBeanFactory(CsvBeanConfig<T> csvBeanConfig, Iterator<List<String>> csvIterator) throws Exception {
+        if (!csvIterator.hasNext()) {
+            throw new IllegalArgumentException("Unable to create BeanFactory for empty values iterator");
+        }
+        List<String> propertyNames = csvIterator.next();
+        return csvBeanConfig.getBeanFactoryBuilder().createBeanFactory(csvBeanConfig.getTargetClass(), propertyNames);
     }
 
     @Override
@@ -72,33 +71,33 @@ public class CsvBeanIterator<T> implements Iterator<T> {
     @SneakyThrows
     @Override
     public T next() {
-        List<String> values = csvIterator.next();
-
-        row.incRowNumber();
-        row.setValues(values);
-        row.setTargetBean(csvBeanConfig.getTargetClassSupplier().get());
-
-        ProcessingState processingState = ProcessingState.CONTINUE;
-        if (csvBeanConfig.getRowPreProcessor() != null) {
-            processingState = csvBeanConfig.getRowPreProcessor().apply(this.row);
-        }
-
-        if (processingState == ProcessingState.SKIP) {
-            return csvBeanConfig.getSkipRowBean();
-        } else if (processingState == ProcessingState.STOP) {
-            csvIterator = Collections.emptyIterator();
-            return csvBeanConfig.getSkipRowBean();
-        }
-
-        for (int i = 0; i < values.size(); i++) {
-            row.setColumnIndex(i);
-            beanMapper.applyValue(row);
-        }
-
-        if (processingState == ProcessingState.LAST) {
-            csvIterator = Collections.emptyIterator();
-        }
-
-        return this.row.getTargetBean();
+//        List<String> values = csvIterator.next();
+        return beanFactory.apply(csvIterator.next());
+//        row.incRowNumber();
+//        row.setValues(values);
+//        row.setTargetBean(csvBeanConfig.getTargetClassSupplier().get());
+//
+//        ProcessingState processingState = ProcessingState.CONTINUE;
+//        if (csvBeanConfig.getRowPreProcessor() != null) {
+//            processingState = csvBeanConfig.getRowPreProcessor().apply(this.row);
+//        }
+//
+//        if (processingState == ProcessingState.SKIP) {
+//            return csvBeanConfig.getSkipRowBean();
+//        } else if (processingState == ProcessingState.STOP) {
+//            csvIterator = Collections.emptyIterator();
+//            return csvBeanConfig.getSkipRowBean();
+//        }
+//
+//        for (int i = 0; i < values.size(); i++) {
+//            row.setColumnIndex(i);
+//            beanMapper.applyValue(row);
+//        }
+//
+//        if (processingState == ProcessingState.LAST) {
+//            csvIterator = Collections.emptyIterator();
+//        }
+//
+//        return this.row.getTargetBean();
     }
 }

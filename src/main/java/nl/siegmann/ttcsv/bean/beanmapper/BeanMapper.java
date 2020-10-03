@@ -8,7 +8,6 @@ import nl.siegmann.ttcsv.bean.converter.ConverterRegistry;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,7 +25,7 @@ public class BeanMapper<T> {
 
     @SneakyThrows
     private ValueMapper<T> createValueMapper(String columnName, Class<T> targetClass, ConverterRegistry converterRegistry) {
-        return new ValueMapper<T>(targetClass, columnName, converterRegistry);
+        return new ValueMapper<>(targetClass, columnName, converterRegistry);
     }
 
     private static class ValueMapper<T> {

@@ -1,5 +1,6 @@
 package nl.siegmann.ttcsv.bean;
 
+import lombok.SneakyThrows;
 import nl.siegmann.ttcsv.csv.CsvIterator;
 import nl.siegmann.ttcsv.util.StreamUtil;
 
@@ -15,6 +16,7 @@ public class CsvBeanReader<T> implements Function<Reader, Stream<T>> {
         this.csvBeanConfig = csvBeanConfig;
     }
 
+    @SneakyThrows
     @Override
     public Stream<T> apply(Reader reader) {
         CsvBeanIterator<T> csvBeanIterator = new CsvBeanIterator<>(csvBeanConfig, new CsvIterator(csvBeanConfig, reader));
