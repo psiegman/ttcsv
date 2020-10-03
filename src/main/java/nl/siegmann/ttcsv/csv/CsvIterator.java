@@ -126,7 +126,11 @@ public class CsvIterator implements Iterator<List<String>> {
             currentChar = reader.read();
         }
 
-        while (currentChar >= 0 && currentChar != csvConfig.getFieldSeparator()) {
+        while (currentChar >= 0) {
+            if (currentChar == csvConfig.getFieldSeparator()
+                    || csvConfig.isRowSeparatorChar(currentChar)) {
+                break;
+            }
             currentChar = reader.read();
         }
 

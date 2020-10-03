@@ -90,4 +90,8 @@ public class BeanFactory<T> implements Function<List<String>, T> {
         }
         return bean;
     }
+
+    public ConverterRegistry getConverterRegistry() {
+        return converterRegistry;
+    }
 }

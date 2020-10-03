@@ -11,7 +11,7 @@ import java.util.stream.Stream;
  * Creates a Reader from an Iterator of Strings inserting the given separator.
  *
  * Notes:
- * - The given separator will not be read after the last string in the iterator.
+ * - The given separator will be read between the elements of the iterator, _not_ after.
  * - Contains utility methods to create this reader from a Stream or an array of Strings.
  */
 public class StringIteratorReader extends Reader {

@@ -143,5 +143,28 @@ public class CsvReaderTest {
             // then
             assertThat(csvData).isEqualTo(Collections.singletonList(Collections.singletonList("apple,pear")));
         }
+
+        @Test
+        public void shouldReadQuotedCsv() {
+            // given
+            Reader input = new StringReader(
+                    "\"id\"|\"name\"\n"
+                            + "\"1\"|\"alice\"\n"
+                            + "\"2\"|\"bob\"");
+            CsvConfig csvConfig = new CsvConfig().withFieldSeparator('|').withQuoteValues(true);
+            Stream<List<String>> csvDataStream = new CsvReader(csvConfig).apply(input);
+
+            // when
+            List<List<String>> actualCsvData = csvDataStream.collect(Collectors.toList());
+
+            // then
+            assertThat(actualCsvData).isEqualTo(
+                    Arrays.asList(
+                            Arrays.asList("id", "name"),
+                            Arrays.asList("1", "alice"),
+                            Arrays.asList("2", "bob")
+                    ));
+        }
+
     }
 }
