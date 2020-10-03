@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import nl.siegmann.ttcsv.bean.*;
+import nl.siegmann.ttcsv.bean.BeanFactory;
+import nl.siegmann.ttcsv.bean.BeanFactoryBuilder;
 import nl.siegmann.ttcsv.bean.converter.Converter;
 import nl.siegmann.ttcsv.csv.CsvConfig;
 import nl.siegmann.ttcsv.csv.CsvReader;
@@ -15,16 +16,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,54 +38,11 @@ public class ExampleTest {
     @Nested
     class CsvReaderTests {
 
-        @DisplayName("Read a simple csv file")
-        @Test
-        public void shouldReadSimpleCsv() {
-            // given
-            Reader input = new StringReader("id,name\n1,alice\n2,bob");
-            Function<Reader, Stream<List<String>>> csvReader = new CsvReader();
-            Stream<List<String>> csvDataStream = csvReader.apply(input);
-
-            // when
-            List<List<String>> actualCsvData = csvDataStream.collect(Collectors.toList());
-
-            // then
-            assertThat(actualCsvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("id", "name"),
-                            Arrays.asList("1", "alice"),
-                            Arrays.asList("2", "bob")
-                    ));
-        }
-
         @DisplayName("Read a simple csv file with '|' as separators")
         @Test
         public void shouldReadPipeSeparatedCsv() {
             // given
             Reader input = new StringReader("id|name\n1|alice\n2|bob");
-            CsvConfig csvConfig = new CsvConfig().withFieldSeparator('|');
-            Stream<List<String>> csvDataStream = new CsvReader(csvConfig).apply(input);
-
-            // when
-            List<List<String>> actualCsvData = csvDataStream.collect(Collectors.toList());
-
-            // then
-            assertThat(actualCsvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("id", "name"),
-                            Arrays.asList("1", "alice"),
-                            Arrays.asList("2", "bob")
-                    ));
-        }
-
-        @DisplayName("Read a quoted CSV file")
-        @Test
-        public void shouldReadQuotedCsv() {
-            // given
-            Reader input = new StringReader(
-                    "\"id\"|\"name\"\n"
-                            + "\"1\"|\"alice\"\n"
-                            + "\"2\"|\"bob\"");
             CsvConfig csvConfig = new CsvConfig().withFieldSeparator('|');
             Stream<List<String>> csvDataStream = new CsvReader(csvConfig).apply(input);
 
@@ -124,28 +79,9 @@ public class ExampleTest {
             this.beanFactoryBuilder = new BeanFactoryBuilder();
         }
 
-        @DisplayName("Read a csv file with persons using the CsvBeanReader")
-        @Test
-        public void test_single_person() throws IOException {
-            // given
-            Reader input = StringIteratorReader.of("\n",
-                    "id|name|lastUpdate",
-                    "1|alice|2020-10-26T10:15:30.00Z"
-            );
-            CsvBeanConfig<Person> csvBeanConfig = new CsvBeanConfig<>(Person::new).withFieldSeparator('|');
-            CsvBeanReader csvBeanReader = new CsvBeanReader(csvBeanConfig);
-
-            // when
-            List<Person> persons = (List<Person>) csvBeanReader.apply(input).peek(p -> System.out.println(p.getClass())).collect(Collectors.toList());
-
-            // then
-            assertThat(persons).isEqualTo(Collections.singletonList(
-                    new Person(1, "alice", Instant.parse("2020-10-26T10:15:30.00Z"))));
-        }
-
         @DisplayName("Read a csv file with persons using the BeanFactory")
         @Test
-        public void test_two_persons_stream() throws Exception {
+        public void shouldReadTwoPersons() throws Exception {
             // given
             Stream<List<String>> csvStream = createCsvStream(
                     "id|name|lastUpdate",
@@ -157,7 +93,7 @@ public class ExampleTest {
             // when
             List<Person> persons = csvStream
                     .map(beanFactory)
-                    .filter(Objects::nonNull)
+                    .skip(1)
                     .collect(Collectors.toList());
 
             // then
@@ -206,7 +142,7 @@ public class ExampleTest {
 
         @DisplayName("Read a csv file to java beans using a custom type converter")
         @Test
-        public void test_custom_converter() throws Exception {
+        public void shouldReadTwoFruitsWithCustomConverter() throws Exception {
             // given
             Stream<List<String>> csvStream = createCsvStream(
                     "name|price",
