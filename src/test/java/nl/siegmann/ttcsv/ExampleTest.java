@@ -88,12 +88,11 @@ public class ExampleTest {
                     "1|alice|2020-10-26T10:15:30.00Z",
                     "2|bob|2020-10-26T11:15:30.00Z"
             );
-            Function<List<String>, Person> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
+            Function<List<String>, Stream<Person>> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
 
             // when
             List<Person> persons = csvStream
-                    .map(beanFactory)
-                    .skip(1)
+                    .flatMap(beanFactory)
                     .collect(Collectors.toList());
 
             // then
@@ -154,8 +153,7 @@ public class ExampleTest {
 
             // when
             List<Fruit> fruits = csvStream
-                    .map(beanFactory)
-                    .skip(1)
+                    .flatMap(beanFactory)
                     .collect(Collectors.toList());
 
             // then

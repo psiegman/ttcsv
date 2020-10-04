@@ -20,6 +20,6 @@ public class CsvBeanReader<T> implements Function<Reader, Stream<T>> {
     @Override
     public Stream<T> apply(Reader reader) {
         CsvBeanIterator<T> csvBeanIterator = new CsvBeanIterator<>(csvBeanConfig, new CsvIterator(csvBeanConfig, reader));
-        return StreamUtil.toStream(csvBeanIterator);
+        return StreamUtil.toStream(csvBeanIterator).flatMap(Function.identity());
     }
 }

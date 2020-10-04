@@ -12,8 +12,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-public class BeanFactory<T> implements Function<List<String>, T> {
+public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
 
     private final Class<T> targetClass;
     private final Supplier<T> beanSupplier;
@@ -79,16 +80,16 @@ public class BeanFactory<T> implements Function<List<String>, T> {
 
     @SneakyThrows
     @Override
-    public T apply(List<String> values) {
+    public Stream<T> apply(List<String> values) {
         if (valueMappers == null) {
             this.valueMappers = createValueMappers(targetClass, values, converterRegistry);
-            return null;
+            return Stream.empty();
         }
         T bean = beanSupplier.get();
         for (int i = 0; i < values.size(); i++) {
             valueMappers.get(i).apply(values.get(i), bean);
         }
-        return bean;
+        return Stream.of(bean);
     }
 
     /**
