@@ -61,11 +61,10 @@ TTCSV contains a simple bean mapper that can create java beans from the csv data
                     "1|apple|1.25",
                     "2|orange|1.37"
             );
-            Function<List<String>, Stream<Fruit>> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
 
             // when
             List<Fruit> Fruits = csvStream
-                    .flatMap(beanFactory)
+                    .flatMap(beanFactoryBuilder.createBeanFactory(Fruit.class))
                     .collect(Collectors.toList());
 
             // then

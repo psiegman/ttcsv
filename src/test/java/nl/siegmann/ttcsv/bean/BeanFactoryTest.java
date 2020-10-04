@@ -19,7 +19,6 @@ import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,11 +52,10 @@ public class BeanFactoryTest {
                 "1|apple|2020-10-26T10:15:30.00Z",
                 "2|pear|2020-10-26T11:15:30.00Z"
         );
-        Function<List<String>, Stream<Fruit>> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
 
         // when
         List<Fruit> fruits = csvStream
-                .flatMap(beanFactory)
+                .flatMap(beanFactoryBuilder.createBeanFactory(Fruit.class))
                 .collect(Collectors.toList());
 
         // then
@@ -105,7 +103,7 @@ public class BeanFactoryTest {
                 "2|pear|1,37"
         );
         BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
-        beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE, Float.class);
+        beanFactory.getConverterRegistry().registerConverterForTypes(new CustomFloatConverter(), Float.TYPE, Float.class);
 
         // when
         List<Fruit> fruits = csvStream

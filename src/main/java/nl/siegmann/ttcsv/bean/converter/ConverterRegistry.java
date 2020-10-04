@@ -26,13 +26,13 @@ public class ConverterRegistry {
 
     private static Map<Class, Converter> createStandardConverters() {
         Map<Class, Converter> converterMap = new HashMap<>();
-        registerConverterForType(converterMap, new LongConverter(), Long.TYPE, Long.class);
-        registerConverterForType(converterMap, new IntegerConverter(), Integer.TYPE, Integer.class);
-        registerConverterForType(converterMap, new FloatConverter(), Float.TYPE, Float.class);
-        registerConverterForType(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
-        registerConverterForType(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
-        registerConverterForType(converterMap, new StringConverter(), String.class);
-        registerConverterForType(converterMap, new InstantConverter(), Instant.class);
+        registerConverterForTypes(converterMap, new LongConverter(), Long.TYPE, Long.class);
+        registerConverterForTypes(converterMap, new IntegerConverter(), Integer.TYPE, Integer.class);
+        registerConverterForTypes(converterMap, new FloatConverter(), Float.TYPE, Float.class);
+        registerConverterForTypes(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
+        registerConverterForTypes(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
+        registerConverterForTypes(converterMap, new StringConverter(), String.class);
+        registerConverterForTypes(converterMap, new InstantConverter(), Instant.class);
         return converterMap;
     }
 
@@ -44,11 +44,13 @@ public class ConverterRegistry {
         return converter;
     }
 
-    public <T> void registerConverterForType(Converter<T> converter, Class<T>... classes) {
-        registerConverterForType(this.typeConverters, converter, classes);
+    @SafeVarargs
+    public final <T> void registerConverterForTypes(Converter<T> converter, Class<T>... classes) {
+        registerConverterForTypes(this.typeConverters, converter, classes);
     }
 
-    public static <T> void registerConverterForType(Map<Class, Converter> typeConverters, Converter<T> converter, Class<T>... classes) {
+    @SafeVarargs
+    public static <T> void registerConverterForTypes(Map<Class, Converter> typeConverters, Converter<T> converter, Class<T>... classes) {
         if (classes == null) {
             return;
         }

@@ -20,7 +20,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
@@ -107,11 +106,10 @@ public class ExampleTest {
                     "1|apple|1.25",
                     "2|orange|1.37"
             );
-            Function<List<String>, Stream<Fruit>> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
 
             // when
             List<Fruit> Fruits = csvStream
-                    .flatMap(beanFactory)
+                    .flatMap(beanFactoryBuilder.createBeanFactory(Fruit.class))
                     .collect(Collectors.toList());
 
             // then
@@ -160,7 +158,7 @@ public class ExampleTest {
                     "2|pear|1,37"
             );
             BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
-            beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE, Float.class);
+            beanFactory.getConverterRegistry().registerConverterForTypes(new CustomFloatConverter(), Float.TYPE, Float.class);
 
             // when
             List<Fruit> fruits = csvStream
