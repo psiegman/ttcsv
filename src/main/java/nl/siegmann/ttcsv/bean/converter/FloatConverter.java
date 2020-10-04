@@ -1,9 +1,9 @@
 package nl.siegmann.ttcsv.bean.converter;
 
-public class FloatConverter extends AbstractConverter<Float> {
+public class FloatConverter extends AbstractConverter {
 
     @Override
-    public Float applyNotBlank(String s) {
+    public Object applyNotBlank(String s) {
         return Float.parseFloat(s);
     }
 }

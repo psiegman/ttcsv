@@ -1,9 +1,9 @@
 package nl.siegmann.ttcsv.bean.converter;
 
-public class DoubleConverter extends AbstractConverter<Double> {
+public class DoubleConverter extends AbstractConverter {
 
     @Override
-    public Double applyNotBlank(String s) {
+    public Object applyNotBlank(String s) {
         return Double.parseDouble(s);
     }
 }

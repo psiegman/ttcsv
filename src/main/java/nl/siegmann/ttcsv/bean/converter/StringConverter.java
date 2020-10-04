@@ -1,9 +1,9 @@
 package nl.siegmann.ttcsv.bean.converter;
 
-public class StringConverter implements Converter<String> {
+public class StringConverter implements Converter {
 
     @Override
-    public String apply(String s) {
+    public Object apply(String s) {
         return s;
     }
 }

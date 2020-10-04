@@ -122,7 +122,7 @@ public class ExampleTest {
         /**
          * Reads a floating point number with a ',' as a decimal separator.
          */
-        private static class CustomFloatConverter implements Converter<Float> {
+        private static class CustomFloatConverter implements Converter {
             private DecimalFormat decimalFormat;
 
             public CustomFloatConverter() {

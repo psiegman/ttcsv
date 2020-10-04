@@ -2,25 +2,25 @@ package nl.siegmann.ttcsv.bean.converter;
 
 import nl.siegmann.ttcsv.util.StringUtils;
 
-public abstract class AbstractConverter<T> implements Converter<T> {
+public abstract class AbstractConverter implements Converter {
 
-    private final T defaultValue;
+    private final Object defaultValue;
 
     public AbstractConverter() {
         this(null);
     }
 
-    public AbstractConverter(T defaultValue) {
+    public AbstractConverter(Object defaultValue) {
         this.defaultValue = defaultValue;
     }
 
     @Override
-    public T apply(String s) {
+    public Object apply(String s) {
         if (StringUtils.isBlank(s)) {
             return defaultValue;
         }
         return applyNotBlank(s);
     }
 
-    public abstract T applyNotBlank(String s);
+    public abstract Object applyNotBlank(String s);
 }

@@ -111,6 +111,7 @@ public class CsvIterator implements Iterator<List<String>> {
         currentChar = reader.read();
         while (currentChar >= 0) {
             if (previousChar == QUOTE_CHAR) {
+                // check and handle escaped quote char
                 previousChar = -1;
                 if (currentChar == QUOTE_CHAR) {
                     value.append((char) QUOTE_CHAR);
@@ -118,6 +119,7 @@ public class CsvIterator implements Iterator<List<String>> {
                     break;
                 }
             } else {
+                // regular char, add it to value
                 if (previousChar >= 0) {
                     value.append((char) previousChar);
                 }
@@ -126,6 +128,7 @@ public class CsvIterator implements Iterator<List<String>> {
             currentChar = reader.read();
         }
 
+        // read characters between closing quote and field-separator or row-separator
         while (currentChar >= 0) {
             if (currentChar == csvConfig.getFieldSeparator()
                     || csvConfig.isRowSeparatorChar(currentChar)) {

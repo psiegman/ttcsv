@@ -1,9 +1,9 @@
 package nl.siegmann.ttcsv.bean.converter;
 
-public class IntegerConverter extends AbstractConverter {
+public class BooleanConverter extends AbstractConverter {
 
     @Override
     public Object applyNotBlank(String s) {
-        return Integer.parseInt(s);
+        return Boolean.parseBoolean(s);
     }
 }
