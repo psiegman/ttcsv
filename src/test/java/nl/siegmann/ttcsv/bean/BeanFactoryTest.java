@@ -14,13 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
-import java.io.Reader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.Instant;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -33,18 +30,11 @@ public class BeanFactoryTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Person {
+    public static class Fruit {
         private long id;
         private String name;
+        private Float price;
         private Instant lastUpdate;
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Fruit {
-        private String name;
-        private float price;
     }
 
     private BeanFactoryBuilder beanFactoryBuilder;
@@ -60,20 +50,20 @@ public class BeanFactoryTest {
         // given
         Stream<List<String>> csvStream = createCsvStream(
                 "id|name|lastUpdate",
-                "1|alice|2020-10-26T10:15:30.00Z",
-                "2|bob|2020-10-26T11:15:30.00Z"
+                "1|apple|2020-10-26T10:15:30.00Z",
+                "2|pear|2020-10-26T11:15:30.00Z"
         );
-        Function<List<String>, Stream<Person>> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
+        Function<List<String>, Stream<Fruit>> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
 
         // when
-        List<Person> persons = csvStream
+        List<Fruit> fruits = csvStream
                 .flatMap(beanFactory)
                 .collect(Collectors.toList());
 
         // then
-        assertThat(persons).isEqualTo(Arrays.asList(
-                new Person(1, "alice", Instant.parse("2020-10-26T10:15:30.00Z")),
-                new Person(2, "bob", Instant.parse("2020-10-26T11:15:30.00Z"))
+        assertThat(fruits).isEqualTo(Arrays.asList(
+                new Fruit(1, "apple", null, Instant.parse("2020-10-26T10:15:30.00Z")),
+                new Fruit(2, "pear", null, Instant.parse("2020-10-26T11:15:30.00Z"))
         ));
     }
 
@@ -110,12 +100,12 @@ public class BeanFactoryTest {
     public void test_custom_converter() throws Exception {
         // given
         Stream<List<String>> csvStream = createCsvStream(
-                "name|price",
-                "apple|1,25",
-                "pear|1,37"
+                "id|name|price",
+                "1|apple|1,25",
+                "2|pear|1,37"
         );
         BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
-        beanFactory.getConverterRegistry().registerConverter(Float.TYPE, new CustomFloatConverter());
+        beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE, Float.class);
 
         // when
         List<Fruit> fruits = csvStream
@@ -124,8 +114,8 @@ public class BeanFactoryTest {
 
         // then
         assertThat(fruits).isEqualTo(Arrays.asList(
-                new Fruit("apple", 1.25f),
-                new Fruit("pear", 1.37f)
+                new Fruit(1, "apple", 1.25f, null),
+                new Fruit(2, "pear", 1.37f, null)
         ));
     }
 

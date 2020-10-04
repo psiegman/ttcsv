@@ -87,9 +87,13 @@ public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
         }
         T bean = beanSupplier.get();
         for (int i = 0; i < values.size(); i++) {
-            valueMappers.get(i).apply(values.get(i), bean);
+            mapValue(values, i, bean);
         }
         return Stream.of(bean);
+    }
+
+    private void mapValue(List<String> values, int valueIndex, T targetBean) throws InvocationTargetException, IllegalAccessException {
+        valueMappers.get(valueIndex).apply(values.get(valueIndex), targetBean);
     }
 
     /**

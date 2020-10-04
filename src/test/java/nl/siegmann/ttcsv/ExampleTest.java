@@ -30,7 +30,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * A set of unit tests to be used in examples and documentation.
+ * A set of unit tests meant as an example of usage.
  */
 public class ExampleTest {
 
@@ -42,7 +42,7 @@ public class ExampleTest {
         @Test
         public void shouldReadPipeSeparatedCsv() {
             // given
-            Reader input = new StringReader("id|name\n1|alice\n2|bob");
+            Reader input = new StringReader("id|name\n1|apple\n2|orange");
             CsvConfig csvConfig = new CsvConfig().withFieldSeparator('|');
             Stream<List<String>> csvDataStream = new CsvReader(csvConfig).apply(input);
 
@@ -53,8 +53,27 @@ public class ExampleTest {
             assertThat(actualCsvData).isEqualTo(
                     Arrays.asList(
                             Arrays.asList("id", "name"),
-                            Arrays.asList("1", "alice"),
-                            Arrays.asList("2", "bob")
+                            Arrays.asList("1", "apple"),
+                            Arrays.asList("2", "orange")
+                    ));
+        }
+
+        @DisplayName("Read a more complex csv file with quoted values and embedded quotes, separators and newlines")
+        @Test
+        public void shouldReadEmbeddedQuoteCsv() {
+            // given
+            Reader input = new StringReader("id,name,description\n1,apple,\"a green one, try it!\nA second line\"\n2,orange,an orange orange");
+            Stream<List<String>> csvDataStream = new CsvReader().apply(input);
+
+            // when
+            List<List<String>> actualCsvData = csvDataStream.collect(Collectors.toList());
+
+            // then
+            assertThat(actualCsvData).isEqualTo(
+                    Arrays.asList(
+                            Arrays.asList("id", "name", "description"),
+                            Arrays.asList("1", "apple", "a green one, try it!\nA second line"),
+                            Arrays.asList("2", "orange", "an orange orange")
                     ));
         }
     }
@@ -85,8 +104,8 @@ public class ExampleTest {
             // given
             Stream<List<String>> csvStream = createCsvStream(
                     "id|name|lastUpdate",
-                    "1|alice|2020-10-26T10:15:30.00Z",
-                    "2|bob|2020-10-26T11:15:30.00Z"
+                    "1|apple|2020-10-26T10:15:30.00Z",
+                    "2|orange|2020-10-26T11:15:30.00Z"
             );
             Function<List<String>, Stream<Person>> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
 
@@ -97,8 +116,8 @@ public class ExampleTest {
 
             // then
             assertThat(persons).isEqualTo(Arrays.asList(
-                    new Person(1, "alice", Instant.parse("2020-10-26T10:15:30.00Z")),
-                    new Person(2, "bob", Instant.parse("2020-10-26T11:15:30.00Z"))
+                    new Person(1, "apple", Instant.parse("2020-10-26T10:15:30.00Z")),
+                    new Person(2, "orange", Instant.parse("2020-10-26T11:15:30.00Z"))
             ));
         }
 
@@ -149,7 +168,7 @@ public class ExampleTest {
                     "pear|1,37"
             );
             BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
-            beanFactory.getConverterRegistry().registerConverter(Float.TYPE, new CustomFloatConverter());
+            beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE);
 
             // when
             List<Fruit> fruits = csvStream

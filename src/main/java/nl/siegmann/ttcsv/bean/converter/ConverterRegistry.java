@@ -1,6 +1,7 @@
 package nl.siegmann.ttcsv.bean.converter;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,16 +26,13 @@ public class ConverterRegistry {
 
     private static Map<Class, Converter> createStandardConverters() {
         Map<Class, Converter> converterMap = new HashMap<>();
-        converterMap.put(Long.class, new AbstractConverter() {
-
-            @Override
-            public Object applyNotBlank(String s) {
-                return Long.parseLong(s);
-            }
-        });
-        converterMap.put(Long.TYPE, new LongConverter());
-        converterMap.put(String.class, new StringConverter());
-        converterMap.put(Instant.class, new InstantConverter());
+        registerConverterForType(converterMap, new LongConverter(), Long.TYPE, Long.class);
+        registerConverterForType(converterMap, new IntegerConverter(), Integer.TYPE, Integer.class);
+        registerConverterForType(converterMap, new FloatConverter(), Float.TYPE, Float.class);
+        registerConverterForType(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
+        registerConverterForType(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
+        registerConverterForType(converterMap, new StringConverter(), String.class);
+        registerConverterForType(converterMap, new InstantConverter(), Instant.class);
         return converterMap;
     }
 
@@ -46,7 +44,14 @@ public class ConverterRegistry {
         return converter;
     }
 
-    public <T> void registerConverter(Class<T> clazz, Converter<T> converter) {
-        this.typeConverters.put(clazz, converter);
+    public <T> void registerConverterForType(Converter<T> converter, Class<T>... classes) {
+        registerConverterForType(this.typeConverters, converter, classes);
+    }
+
+    public static <T> void registerConverterForType(Map<Class, Converter> typeConverters, Converter<T> converter, Class<T>... classes) {
+        if (classes == null) {
+            return;
+        }
+        Arrays.stream(classes).forEach(clazz -> typeConverters.put(clazz, converter));
     }
 }

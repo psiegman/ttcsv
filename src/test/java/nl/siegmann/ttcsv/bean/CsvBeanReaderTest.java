@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.siegmann.ttcsv.util.StringIteratorReader;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -26,13 +25,6 @@ public class CsvBeanReaderTest {
         private long id;
         private String name;
         private Instant lastUpdate;
-    }
-
-    private BeanFactoryBuilder beanFactoryBuilder;
-
-    @BeforeEach
-    public void setUp() {
-        this.beanFactoryBuilder = new BeanFactoryBuilder();
     }
 
     @Test
