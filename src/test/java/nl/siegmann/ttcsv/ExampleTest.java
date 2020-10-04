@@ -85,10 +85,10 @@ public class ExampleTest {
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
-        public static class Person {
+        public static class Fruit {
             private long id;
             private String name;
-            private Instant lastUpdate;
+            private Float price;
         }
 
         private BeanFactoryBuilder beanFactoryBuilder;
@@ -98,35 +98,27 @@ public class ExampleTest {
             this.beanFactoryBuilder = new BeanFactoryBuilder();
         }
 
-        @DisplayName("Read a csv file with persons using the BeanFactory")
+        @DisplayName("Read a csv file with Fruits using the BeanFactory")
         @Test
-        public void shouldReadTwoPersons() throws Exception {
+        public void shouldReadTwoFruits() throws Exception {
             // given
             Stream<List<String>> csvStream = createCsvStream(
-                    "id|name|lastUpdate",
-                    "1|apple|2020-10-26T10:15:30.00Z",
-                    "2|orange|2020-10-26T11:15:30.00Z"
+                    "id|name|price",
+                    "1|apple|1.25",
+                    "2|orange|1.37"
             );
-            Function<List<String>, Stream<Person>> beanFactory = beanFactoryBuilder.createBeanFactory(Person.class);
+            Function<List<String>, Stream<Fruit>> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
 
             // when
-            List<Person> persons = csvStream
+            List<Fruit> Fruits = csvStream
                     .flatMap(beanFactory)
                     .collect(Collectors.toList());
 
             // then
-            assertThat(persons).isEqualTo(Arrays.asList(
-                    new Person(1, "apple", Instant.parse("2020-10-26T10:15:30.00Z")),
-                    new Person(2, "orange", Instant.parse("2020-10-26T11:15:30.00Z"))
+            assertThat(Fruits).isEqualTo(Arrays.asList(
+                    new Fruit(1, "apple", 1.25f),
+                    new Fruit(2, "orange", 1.37f)
             ));
-        }
-
-        @Data
-        @NoArgsConstructor
-        @AllArgsConstructor
-        public static class Fruit {
-            private String name;
-            private float price;
         }
 
         /**
@@ -163,12 +155,12 @@ public class ExampleTest {
         public void shouldReadTwoFruitsWithCustomConverter() throws Exception {
             // given
             Stream<List<String>> csvStream = createCsvStream(
-                    "name|price",
-                    "apple|1,25",
-                    "pear|1,37"
+                    "id|name|price",
+                    "1|apple|1,25",
+                    "2|pear|1,37"
             );
             BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
-            beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE);
+            beanFactory.getConverterRegistry().registerConverterForType(new CustomFloatConverter(), Float.TYPE, Float.class);
 
             // when
             List<Fruit> fruits = csvStream
@@ -177,8 +169,8 @@ public class ExampleTest {
 
             // then
             assertThat(fruits).isEqualTo(Arrays.asList(
-                    new Fruit("apple", 1.25f),
-                    new Fruit("pear", 1.37f)
+                    new Fruit(1, "apple", 1.25f),
+                    new Fruit(2, "pear", 1.37f)
             ));
         }
 
