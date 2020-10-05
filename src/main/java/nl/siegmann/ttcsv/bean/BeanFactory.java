@@ -101,7 +101,6 @@ public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
      * Generally if the BeanFactory is created by the BeanFactoryBuilder its ConverterRegistry will have the BeanFactoryBuilder's
      * ConverterRegistry as its parent registry, allowing the BeanFactory to add/overwrite specific Converters without
      * changing the shared ConverterRegistry.
-     * @return
      */
     public ConverterRegistry getConverterRegistry() {
         return converterRegistry;

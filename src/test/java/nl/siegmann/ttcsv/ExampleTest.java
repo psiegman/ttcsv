@@ -22,7 +22,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -79,7 +78,7 @@ public class ExampleTest {
 
     @DisplayName("Using ttcsv to read csv to java beans")
     @Nested
-    static class CsvBeanReaderTests {
+    class CsvBeanReaderTests {
 
         @Data
         @NoArgsConstructor
@@ -123,7 +122,7 @@ public class ExampleTest {
          * Reads a floating point number with a ',' as a decimal separator.
          */
         private static class CustomFloatConverter implements Converter {
-            private DecimalFormat decimalFormat;
+            private final DecimalFormat decimalFormat;
 
             public CustomFloatConverter() {
 
