@@ -49,10 +49,10 @@ public class ExampleTest {
 
             // then
             assertThat(actualCsvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("id", "name"),
-                            Arrays.asList("1", "apple"),
-                            Arrays.asList("2", "orange")
+                    List.of(
+                            List.of("id", "name"),
+                            List.of("1", "apple"),
+                            List.of("2", "orange")
                     ));
         }
 
@@ -68,17 +68,17 @@ public class ExampleTest {
 
             // then
             assertThat(actualCsvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("id", "name", "description"),
-                            Arrays.asList("1", "apple", "a green one, try it!\nA second line"),
-                            Arrays.asList("2", "orange", "an orange orange")
+                    List.of(
+                            List.of("id", "name", "description"),
+                            List.of("1", "apple", "a green one, try it!\nA second line"),
+                            List.of("2", "orange", "an orange orange")
                     ));
         }
     }
 
     @DisplayName("Using ttcsv to read csv to java beans")
     @Nested
-    class CsvBeanReaderTests {
+    static class CsvBeanReaderTests {
 
         @Data
         @NoArgsConstructor
@@ -112,7 +112,7 @@ public class ExampleTest {
                     .collect(Collectors.toList());
 
             // then
-            assertThat(Fruits).isEqualTo(Arrays.asList(
+            assertThat(Fruits).isEqualTo(List.of(
                     new Fruit(1, "apple", 1.25f),
                     new Fruit(2, "orange", 1.37f)
             ));
@@ -165,7 +165,7 @@ public class ExampleTest {
                     .collect(Collectors.toList());
 
             // then
-            assertThat(fruits).isEqualTo(Arrays.asList(
+            assertThat(fruits).isEqualTo(List.of(
                     new Fruit(1, "apple", 1.25f),
                     new Fruit(2, "pear", 1.37f)
             ));

@@ -45,7 +45,7 @@ public class CsvReaderTest {
 
             // then
             assertThat(csvData).isEqualTo(
-                    Arrays.asList(
+                    List.of(
                             Collections.singletonList("apple"),
                             Collections.singletonList("pear")
                     ));
@@ -61,9 +61,9 @@ public class CsvReaderTest {
 
             // then
             assertThat(csvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("apple", "pear"),
-                            Arrays.asList("orange", "tangerine")
+                    List.of(
+                            List.of("apple", "pear"),
+                            List.of("orange", "tangerine")
                     ));
         }
 
@@ -90,7 +90,7 @@ public class CsvReaderTest {
             List<List<String>> csvData = new CsvReader().apply(new StringReader(input)).collect(Collectors.toList());
 
             // then
-            assertThat(csvData).isEqualTo(Collections.singletonList(Arrays.asList("apple", "pear")));
+            assertThat(csvData).isEqualTo(Collections.singletonList(List.of("apple", "pear")));
         }
 
         @Test
@@ -102,7 +102,7 @@ public class CsvReaderTest {
             List<List<String>> csvData = new CsvReader().apply(new StringReader(input)).collect(Collectors.toList());
 
             // then
-            assertThat(csvData).isEqualTo(Collections.singletonList(Arrays.asList("apple", "", "pear")));
+            assertThat(csvData).isEqualTo(Collections.singletonList(List.of("apple", "", "pear")));
         }
     }
 
@@ -159,10 +159,10 @@ public class CsvReaderTest {
 
             // then
             assertThat(actualCsvData).isEqualTo(
-                    Arrays.asList(
-                            Arrays.asList("id", "name"),
-                            Arrays.asList("1", "alice"),
-                            Arrays.asList("2", "bob")
+                    List.of(
+                            List.of("id", "name"),
+                            List.of("1", "alice"),
+                            List.of("2", "bob")
                     ));
         }
 

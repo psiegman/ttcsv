@@ -2,9 +2,9 @@ package nl.siegmann.ttcsv.util;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -33,7 +33,7 @@ public class StringIteratorReader extends Reader {
     }
 
     public static Reader of(String separator, String... data) {
-        return new StringIteratorReader(separator, Arrays.asList(data).iterator());
+        return new StringIteratorReader(separator, List.of(data).iterator());
     }
 
     @Override

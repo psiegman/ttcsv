@@ -60,7 +60,7 @@ public class PerformanceTest {
                     Arrays.fill(row, textValue);
                     row[0] = String.valueOf(rowNr);
                     row[row.length-1] = "hi";
-                    return Arrays.asList(row);
+                    return List.of(row);
                 });
 
         CsvWriter csvWriter = new CsvWriter(new CsvConfig().withFieldSeparator('|').withQuoteValues(false).withRowSeparatorChars("\n"));

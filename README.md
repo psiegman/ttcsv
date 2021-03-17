@@ -68,7 +68,7 @@ TTCSV contains a simple bean mapper that can create java beans from the csv data
                     .collect(Collectors.toList());
 
             // then
-            assertThat(Fruits).isEqualTo(Arrays.asList(
+            assertThat(Fruits).isEqualTo(List.of(
                     new Fruit(1, "apple", 1.25f),
                     new Fruit(2, "orange", 1.37f)
             ));
@@ -84,4 +84,4 @@ TTCSV contains a simple bean mapper that can create java beans from the csv data
 
 ## Example usage
 
-[Sample Code](src/test/java/nl/siegmann/ttcsv/ExampleTest.java)
+[Sample Code](ttcsv-core/src/test/java/nl/siegmann/ttcsv/ExampleTest.java)

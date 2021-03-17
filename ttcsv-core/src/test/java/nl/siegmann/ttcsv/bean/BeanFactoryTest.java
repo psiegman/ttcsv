@@ -59,7 +59,7 @@ public class BeanFactoryTest {
                 .collect(Collectors.toList());
 
         // then
-        assertThat(fruits).isEqualTo(Arrays.asList(
+        assertThat(fruits).isEqualTo(List.of(
                 new Fruit(1, "apple", null, Instant.parse("2020-10-26T10:15:30.00Z")),
                 new Fruit(2, "pear", null, Instant.parse("2020-10-26T11:15:30.00Z"))
         ));
@@ -111,7 +111,7 @@ public class BeanFactoryTest {
                 .collect(Collectors.toList());
 
         // then
-        assertThat(fruits).isEqualTo(Arrays.asList(
+        assertThat(fruits).isEqualTo(List.of(
                 new Fruit(1, "apple", 1.25f, null),
                 new Fruit(2, "pear", 1.37f, null)
         ));

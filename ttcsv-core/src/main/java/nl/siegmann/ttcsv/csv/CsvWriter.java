@@ -1,6 +1,7 @@
 package nl.siegmann.ttcsv.csv;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +18,11 @@ public class CsvWriter {
         this.csvConfig = csvConfig;
     }
 
-    public void writeCsv(Stream<List<String>> data, Writer out) throws IOException {
+    public String writeCsvToString(Stream<List<String>> data) throws IOException {
+        return writeCsv(data, new StringWriter()).toString();
+    }
+
+    public Writer writeCsv(Stream<List<String>> data, Writer out) throws IOException {
         for (Iterator<List<String>> rowIter = data.iterator(); rowIter.hasNext(); ) {
             for (Iterator<String> valueIter = rowIter.next().iterator(); valueIter.hasNext(); ) {
                 String value = valueIter.next();
@@ -36,6 +41,7 @@ public class CsvWriter {
                 }
             }
         }
+        return out;
     }
 
     private String escapeQuotes(String value) {
