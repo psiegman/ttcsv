@@ -1,5 +1,6 @@
 package nl.siegmann.ttcsv.bean.converter;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class ConverterRegistry {
 
     private static Map<Class, Converter> createStandardConverters() {
         Map<Class, Converter> converterMap = new HashMap<>();
+        registerConverterForTypes(converterMap, new BigDecimalConverter(), BigDecimal.class);
         registerConverterForTypes(converterMap, new BooleanConverter(), Boolean.TYPE, Boolean.class);
         registerConverterForTypes(converterMap, new DoubleConverter(), Double.TYPE, Double.class);
         registerConverterForTypes(converterMap, new FloatConverter(), Float.TYPE, Float.class);

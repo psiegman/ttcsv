@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +22,10 @@ public class CsvBeanReaderTest {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class Person {
+    public static class Fruit {
         private long id;
         private String name;
+        private BigDecimal price;
         private Instant lastUpdate;
     }
 
@@ -31,16 +33,16 @@ public class CsvBeanReaderTest {
     public void test_single_person() throws IOException {
         // given
         Reader input = StringIteratorReader.of("\n",
-                "id|name|lastUpdate",
-                "1|alice|2020-10-26T10:15:30.00Z"
+                "id|name|price|lastUpdate",
+                "1|apple|1.95|2020-10-26T10:15:30.00Z"
         );
-        CsvBeanReader<Person> csvBeanReader = new CsvBeanReader<>(new CsvBeanConfig(Person::new).withFieldSeparator('|'));
+        CsvBeanReader<Fruit> csvBeanReader = new CsvBeanReader<>(new CsvBeanConfig<>(Fruit::new).withFieldSeparator('|'));
 
         // when
-        List<Person> persons = csvBeanReader.apply(input).collect(Collectors.toList());
+        List<Fruit> fruits = csvBeanReader.apply(input).collect(Collectors.toList());
 
         // then
-        assertThat(persons).isEqualTo(Collections.singletonList(
-                new Person(1, "alice", Instant.parse("2020-10-26T10:15:30.00Z"))));
+        assertThat(fruits).isEqualTo(Collections.singletonList(
+                new Fruit(1, "apple", new BigDecimal("1.95"), Instant.parse("2020-10-26T10:15:30.00Z"))));
     }
 }
