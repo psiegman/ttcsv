@@ -64,7 +64,7 @@ TTCSV contains a simple bean mapper that can create java beans from the csv data
 
             // when
             List<Fruit> Fruits = csvStream
-                    .flatMap(beanFactoryBuilder.createBeanFactory(Fruit.class))
+                    .flatMap(beanFactoryBuilder.createBeanFactory(Fruit::new))
                     .collect(Collectors.toList());
 
             // then
