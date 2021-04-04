@@ -2,6 +2,8 @@
 
 A modern java csv reader/writer.
 
+!(Maven test result)[https://github.com/psiegman/ttcsv/workflows/maven-test/badge.svg]
+
 ## Introduction
 A java 8 lambda/stream-friendly CSV reader.
 It takes a single line to convert a Reader with csv data to a stream of lists of Strings.
