@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.groups.Tuple.tuple;
 
 public class CsvBeanIteratorTest {
 
@@ -43,15 +44,25 @@ public class CsvBeanIteratorTest {
                 + "2|Pear\n"
                 + "3|Orange\n";
 
-        FruitSupplier fruitSupplier = new FruitSupplier();
 
         // when
+        FruitSupplier fruitSupplier = new FruitSupplier();
         List<Fruit> fruits = new CsvBeanReader<>(new CsvBeanConfig<>(fruitSupplier).withFieldSeparator('|'))
                 .apply(new StringReader(csvData))
                 .collect(Collectors.toList());
 
         // then
-        assertThat(fruits.size()).isEqualTo(3);
-        assertThat(fruitSupplier.suppliedFruit.size()).isEqualTo(3);
+        assertThat(fruits.size()).isEqualTo(fruitSupplier.suppliedFruit.size()).isEqualTo(3);
+
+        assertThat(fruits.get(0)).isSameAs(fruitSupplier.suppliedFruit.get(0));
+        assertThat(fruits.get(1)).isSameAs(fruitSupplier.suppliedFruit.get(1));
+        assertThat(fruits.get(2)).isSameAs(fruitSupplier.suppliedFruit.get(2));
+
+        assertThat(fruits)
+                .extracting("id", "name")
+                .containsExactly(
+                    tuple(1l, "Apple"),
+                    tuple(2L, "Pear"),
+                    tuple(3L, "Orange"));
     }
 }
