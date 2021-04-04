@@ -55,7 +55,7 @@ public class BeanFactoryTest {
 
         // when
         List<Fruit> fruits = csvStream
-                .flatMap(beanFactoryBuilder.createBeanFactory(Fruit.class))
+                .flatMap(beanFactoryBuilder.createBeanFactory(Fruit::new))
                 .collect(Collectors.toList());
 
         // then
@@ -102,7 +102,7 @@ public class BeanFactoryTest {
                 "1|apple|1,25",
                 "2|pear|1,37"
         );
-        BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit.class);
+        BeanFactory<Fruit> beanFactory = beanFactoryBuilder.createBeanFactory(Fruit::new);
         beanFactory.getConverterRegistry().registerConverterForTypes(new CustomFloatConverter(), Float.TYPE, Float.class);
 
         // when

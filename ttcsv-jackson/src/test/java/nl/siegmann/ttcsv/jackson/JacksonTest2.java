@@ -27,7 +27,7 @@ import static org.assertj.core.data.MapEntry.entry;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class JacksonTest {
+public class JacksonTest2 {
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -111,8 +111,8 @@ public class JacksonTest {
     }
 
     private class CsvDataFactory<T> implements Iterator<List<String>> {
-        private List<ColumnValueFactory> columnValueFactories;
-        private Iterator<T> beans;
+        private final List<ColumnValueFactory> columnValueFactories;
+        private final Iterator<T> beans;
         private boolean headerIsWritten = false;
 
         public CsvDataFactory(List<ColumnValueFactory> columnValueFactories, Iterator<T> beans) {
@@ -122,7 +122,7 @@ public class JacksonTest {
 
         @Override
         public boolean hasNext() {
-            if (headerIsWritten == false) {
+            if (! headerIsWritten) {
                 return true;
             }
             return beans.hasNext();
@@ -130,7 +130,7 @@ public class JacksonTest {
 
         @Override
         public List<String> next() {
-            if (headerIsWritten == false) {
+            if (! headerIsWritten) {
                 headerIsWritten = true;
                 return getHeaderValues();
             }
@@ -230,7 +230,7 @@ public class JacksonTest {
 
     private static class PropertyDescriptorColumnValueFactoryComparator implements Comparator<PropertyDescriptorColumnValueFactory> {
 
-        private List<String> orderedFields;
+        private final List<String> orderedFields;
 
         private PropertyDescriptorColumnValueFactoryComparator(List<String> orderedFields) {
             this.orderedFields = orderedFields;

@@ -16,10 +16,10 @@ import java.util.stream.Stream;
 
 public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
 
-    private final Class<T> targetClass;
     private final Supplier<T> beanSupplier;
     private final ConverterRegistry converterRegistry;
     private List<ValueMapper<T>> valueMappers;
+    private List<String> columnNames;
 
     private static class ValueMapper<T> {
         private final Converter valueConverter;
@@ -51,19 +51,14 @@ public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
         }
     }
 
-    public BeanFactory(Class<T> targetClass, ConverterRegistry converterRegistry) throws Exception {
-        this(targetClass, new BeanInstanceSupplier<>(targetClass), null, converterRegistry);
+    public BeanFactory(Supplier<T> beanSupplier, ConverterRegistry converterRegistry) throws Exception {
+        this(beanSupplier, null, converterRegistry);
     }
 
-    public BeanFactory(Class<T> targetClass, List<String> propertyNames, ConverterRegistry converterRegistry) throws Exception {
-        this(targetClass, new BeanInstanceSupplier<>(targetClass), propertyNames, converterRegistry);
-    }
-
-    public BeanFactory(Class<T> targetClass, Supplier<T> beanSupplier, List<String> propertyNames, ConverterRegistry converterRegistry) {
-        this.targetClass = targetClass;
+    public BeanFactory(Supplier<T> beanSupplier, List<String> propertyNames, ConverterRegistry converterRegistry) {
         this.converterRegistry = converterRegistry;
         this.beanSupplier = beanSupplier;
-        this.valueMappers = createValueMappers(targetClass, propertyNames, converterRegistry);
+        this.columnNames = propertyNames;
     }
 
     private static <T> List<ValueMapper<T>> createValueMappers(Class<T> targetClass, List<String> propertyNames, ConverterRegistry converterRegistry) {
@@ -78,14 +73,23 @@ public class BeanFactory<T> implements Function<List<String>, Stream<T>> {
         return new ValueMapper<>(targetClass, columnName, converterRegistry);
     }
 
+
     @SneakyThrows
     @Override
     public Stream<T> apply(List<String> values) {
-        if (valueMappers == null) {
-            this.valueMappers = createValueMappers(targetClass, values, converterRegistry);
+
+        if (columnNames == null) {
+            // check header row
+            columnNames = values;
             return Stream.empty();
         }
+
         T bean = beanSupplier.get();
+        if (valueMappers == null) {
+            // first bean row
+            this.valueMappers = createValueMappers((Class<T>) bean.getClass(), columnNames, converterRegistry);
+        }
+
         for (int i = 0; i < values.size(); i++) {
             mapValue(values, i, bean);
         }

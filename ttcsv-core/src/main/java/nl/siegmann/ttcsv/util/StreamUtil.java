@@ -9,9 +9,21 @@ import java.util.stream.StreamSupport;
 public class StreamUtil {
 
     public static <T> Stream<T> toStream(Iterator<T> iterator) {
+        return toStream(iterator, Spliterator.NONNULL, false);
+    }
+
+    /**
+     *
+     * @param iterator Source to read from
+     * @param characteristics @see java.util.Spliterator
+     * @param parallel
+     * @param <T>
+     * @return
+     */
+    public static <T> Stream<T> toStream(Iterator<T> iterator, int characteristics, boolean parallel) {
         Spliterator<T> spliterator = Spliterators.spliteratorUnknownSize(
                 iterator,
-                Spliterator.NONNULL);
-        return StreamSupport.stream(spliterator, false);
+                characteristics);
+        return StreamSupport.stream(spliterator, parallel);
     }
 }

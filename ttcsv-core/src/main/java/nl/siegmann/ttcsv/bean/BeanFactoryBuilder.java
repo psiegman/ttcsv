@@ -3,6 +3,7 @@ package nl.siegmann.ttcsv.bean;
 import nl.siegmann.ttcsv.bean.converter.ConverterRegistry;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class BeanFactoryBuilder {
 
@@ -16,11 +17,11 @@ public class BeanFactoryBuilder {
         this.converterRegistry = converterRegistry;
     }
 
-    public <T> BeanFactory<T> createBeanFactory(Class<T> targetBeanClass) throws Exception {
-        return createBeanFactory(targetBeanClass, null);
+    public <T> BeanFactory<T> createBeanFactory(Supplier<T> beanSupplier) throws Exception {
+        return createBeanFactory(beanSupplier, null);
     }
 
-    public <T> BeanFactory<T> createBeanFactory(Class<T> targetBeanClass, List<String> propertyNames) throws Exception {
-        return new BeanFactory<>(targetBeanClass, propertyNames, new ConverterRegistry(converterRegistry));
+    public <T> BeanFactory<T> createBeanFactory(Supplier<T> beanSupplier, List<String> propertyNames) throws Exception {
+        return new BeanFactory<T>(beanSupplier, propertyNames, new ConverterRegistry(converterRegistry));
     }
 }

@@ -13,21 +13,14 @@ import java.util.stream.Stream;
 public class CsvBeanConfig<T> extends CsvConfig {
 
     private Class<T> targetClass;
-    private final Supplier<T> targetClassSupplier;
+    private final Supplier<T> beanSupplier;
     private final T skipRowBean = null;
     private ConverterRegistry converterRegistry;
     private BeanFactoryBuilder beanFactoryBuilder;
     private Function<List<String>, Stream<T>> beanFactory;
 
-    public CsvBeanConfig(Supplier<T> targetClassSupplier) {
-        this.targetClassSupplier = targetClassSupplier;
-    }
-
-    public Class<T> getTargetClass() {
-        if (this.targetClass == null) {
-            this.targetClass = (Class<T>) targetClassSupplier.get().getClass();
-        }
-        return targetClass;
+    public CsvBeanConfig(Supplier<T> beanSupplier) {
+        this.beanSupplier = beanSupplier;
     }
 
     public ConverterRegistry getConverterRegistry() {
@@ -77,7 +70,7 @@ public class CsvBeanConfig<T> extends CsvConfig {
             if (beanFactoryBuilder == null) {
                 this.beanFactoryBuilder = new BeanFactoryBuilder();
             }
-            this.beanFactory = beanFactoryBuilder.createBeanFactory(getTargetClass(), propertyNames);
+            this.beanFactory = beanFactoryBuilder.createBeanFactory(beanSupplier, propertyNames);
         }
         return beanFactory;
     }
