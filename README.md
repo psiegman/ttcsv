@@ -86,4 +86,4 @@ TTCSV contains a simple bean mapper that can create java beans from the csv data
 
 ## Example usage
 
-[Sample Code](ttcsv-core/src/test/java/nl/siegmann/ttcsv/ExampleTest.java)
+[Sample Code](ttcsv-csv/src/test/java/nl/siegmann/ttcsv/CsvExampleTest.java)
